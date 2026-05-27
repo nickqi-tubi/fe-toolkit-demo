@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
+  "name": "tubi-fe",
+  "description": "Tubi frontend tooling marketplace.",
+  "owner": {
+    "name": "Tubi FE"
+  },
+  "plugins": [
+    {
+      "name": "fe-toolkit",
+      "source": "./",
+      "description": "Frontend dev workflow: Jira ticket -> Figma design -> plan mode -> implement -> conventional commit.",
+      "category": "development",
+      "tags": [
+        "frontend",
+        "jira",
+        "figma",
+        "plan-mode",
+        "conventional-commits"
+      ]
+    }
+  ]
+}

@@ -23,20 +23,21 @@ You need Claude Code 2.1+ with plugin support.
 
 ### Quick install (recommended)
 
-Add this repo as a single-plugin marketplace, then install:
+Add this repo as the `tubi-fe` marketplace, then install the plugin:
 
 ```bash
-claude plugin marketplace add <git-url-of-this-repo>
-claude plugin install fe-toolkit@<marketplace-name>
+claude plugin marketplace add https://github.com/nickqi-tubi/fe-toolkit-demo
+claude plugin install fe-toolkit@tubi-fe
 ```
 
-The marketplace name is whatever you (or Claude Code) registered the source under - check with `claude plugin marketplace list` after `add`.
+The marketplace name (`tubi-fe`) and plugin name (`fe-toolkit`) are declared in [`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json) and [`.claude-plugin/plugin.json`](.claude-plugin/plugin.json) respectively. Verify with `claude plugin marketplace list` after `add`.
 
 ### Local development install
 
 Clone this repo, then from its parent directory:
 
 ```bash
+git clone https://github.com/nickqi-tubi/fe-toolkit-demo.git
 claude plugin install ./fe-toolkit-demo
 ```
 
@@ -106,7 +107,8 @@ Drafts a [Conventional Commits v1.0.0](https://www.conventionalcommits.org/en/v1
 ```
 fe-toolkit-demo/
 ├── .claude-plugin/
-│   └── plugin.json
+│   ├── plugin.json                 # plugin manifest (this plugin)
+│   └── marketplace.json            # marketplace catalog (publishes this plugin as tubi-fe)
 ├── .mcp.json                       # Atlassian Rovo (Streamable HTTP)
 ├── commands/
 │   ├── plan-ticket.md              # /fe-toolkit:plan-ticket
@@ -137,6 +139,7 @@ fe-toolkit-demo/
 | Jira ticket "not found" | Confirm the cloudId your account has access to actually contains the project. The `jira-reader` subagent guesses one if multiple sites are linked - check its `Notes` section. |
 | Commit subject "too long" error | The `conventional-commit` skill caps subjects at 72 chars. Shorten or move detail into the body. |
 | `/fe-toolkit:plan-ticket` says "ticket key invalid" | Use the canonical form `[A-Z][A-Z0-9]+-\d+`, e.g. `FE-1234`, `WEB-12`. URLs are not accepted directly. |
+| `claude plugin marketplace add` errors with `Marketplace file not found at .../.claude-plugin/marketplace.json` | The repo on GitHub does not yet contain the marketplace catalog. Pull `main`, confirm `.claude-plugin/marketplace.json` exists, push, and retry. |
 
 ## Dependencies
 
