@@ -138,8 +138,10 @@ After `git commit` exits 0:
 
 A small shell wrapper is bundled at [scripts/commit.sh](scripts/commit.sh). Prefer it when you have a clean, single-paragraph message - it handles HEREDOC quoting for you. For multi-paragraph bodies or multiple footers, call `git commit` directly with the HEREDOC pattern above.
 
+Always invoke it with an explicit `bash` prefix so the script does not need to be marked executable on the user's filesystem (plugin caches on some systems lose the exec bit):
+
 ```bash
-${CLAUDE_PLUGIN_ROOT}/skills/conventional-commit/scripts/commit.sh \
+bash "${CLAUDE_PLUGIN_ROOT}/skills/conventional-commit/scripts/commit.sh" \
   --type feat \
   --scope player \
   --subject "add picture-in-picture toggle" \
