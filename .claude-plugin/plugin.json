@@ -1,0 +1,16 @@
+{
+  "name": "fe-toolkit",
+  "version": "0.1.0",
+  "description": "Frontend dev workflow: Jira ticket -> Figma design -> plan mode -> implement -> conventional commit.",
+  "author": { "name": "Tubi FE" },
+  "keywords": [
+    "frontend",
+    "jira",
+    "figma",
+    "plan-mode",
+    "conventional-commits"
+  ],
+  "dependencies": [
+    { "name": "figma", "source": "claude-plugins-official" }
+  ]
+}
