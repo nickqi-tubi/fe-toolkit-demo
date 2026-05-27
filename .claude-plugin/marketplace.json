@@ -5,6 +5,7 @@
   "owner": {
     "name": "Tubi FE"
   },
+  "allowCrossMarketplaceDependenciesOn": ["claude-plugins-official"],
   "plugins": [
     {
       "name": "fe-toolkit",

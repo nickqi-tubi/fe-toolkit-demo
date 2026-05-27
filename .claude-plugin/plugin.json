@@ -15,7 +15,7 @@
   "dependencies": [
     {
       "name": "figma",
-      "source": "claude-plugins-official"
+      "marketplace": "claude-plugins-official"
     }
   ]
 }

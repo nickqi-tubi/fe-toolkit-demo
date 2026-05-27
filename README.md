@@ -159,6 +159,7 @@ fe-toolkit-demo/
 | `claude plugin marketplace add` errors with `Marketplace file not found at .../.claude-plugin/marketplace.json` | The repo on GitHub does not yet contain the marketplace catalog. Pull `main`, confirm `.claude-plugin/marketplace.json` exists, push, and retry. |
 | `claude plugin install ./fe-toolkit-demo` errors with `Plugin "./fe-toolkit-demo" not found in any configured marketplace` | `claude plugin install` only accepts `<name>@<marketplace>`, not a directory path. Run `claude plugin marketplace add ./fe-toolkit-demo` first, then `claude plugin install fe-toolkit@tubi-fe`. |
 | `marketplace add` fails because `tubi-fe` already exists | You previously added the GitHub copy. Run `claude plugin marketplace remove tubi-fe` and re-add either source. |
+| `fe-toolkit` shows `failed to load` with `Dependency "figma@tubi-fe" is not installed` | The plugin's manifest must spell the dependency's marketplace correctly (`{ "name": "figma", "marketplace": "claude-plugins-official" }`) AND the `tubi-fe` marketplace must opt in to cross-marketplace dependencies via `"allowCrossMarketplaceDependenciesOn": ["claude-plugins-official"]`. Both are already in this repo; if you see the error, you're on an old install. Fix with: `claude plugin marketplace update tubi-fe && claude plugin update fe-toolkit@tubi-fe`. As a one-time fallback, you can install Figma manually first: `claude plugin install figma@claude-plugins-official`. |
 
 ## Dependencies
 
