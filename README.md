@@ -34,14 +34,31 @@ The marketplace name (`tubi-fe`) and plugin name (`fe-toolkit`) are declared in 
 
 ### Local development install
 
-Clone this repo, then from its parent directory:
+For iterating on the plugin itself (so you don't have to push to GitHub between every edit), register the local clone as a marketplace and install from it:
 
 ```bash
 git clone https://github.com/nickqi-tubi/fe-toolkit-demo.git
-claude plugin install ./fe-toolkit-demo
+claude plugin marketplace add ./fe-toolkit-demo
+claude plugin install fe-toolkit@tubi-fe
 ```
 
-This treats the folder as a single-plugin marketplace and copies it into `~/.claude/plugins/cache`. Re-run after manifest changes.
+Note: `claude plugin install` always takes a `<name>@<marketplace>` reference, never a directory path - the `marketplace add` step is what registers the directory. The marketplace name (`tubi-fe`) comes from the `name` field in [`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json).
+
+If you already added the GitHub copy of this marketplace, you'll hit a name collision because both declare themselves as `tubi-fe`. Pick one:
+
+```bash
+# Option A: switch to the local copy
+claude plugin marketplace remove tubi-fe
+claude plugin marketplace add ./fe-toolkit-demo
+claude plugin install fe-toolkit@tubi-fe
+
+# Option B: keep the GitHub copy, refresh after each push
+git push                                # publish your local edits
+claude plugin marketplace update tubi-fe
+claude plugin update fe-toolkit@tubi-fe
+```
+
+After edits to commands, agents, or skills you can pick them up without reinstalling by running `/reload-plugins` inside a Claude Code session. Changes to `.mcp.json` or `plugin.json` itself need a session restart.
 
 ### What gets installed transitively
 
@@ -140,6 +157,8 @@ fe-toolkit-demo/
 | Commit subject "too long" error | The `conventional-commit` skill caps subjects at 72 chars. Shorten or move detail into the body. |
 | `/fe-toolkit:plan-ticket` says "ticket key invalid" | Use the canonical form `[A-Z][A-Z0-9]+-\d+`, e.g. `FE-1234`, `WEB-12`. URLs are not accepted directly. |
 | `claude plugin marketplace add` errors with `Marketplace file not found at .../.claude-plugin/marketplace.json` | The repo on GitHub does not yet contain the marketplace catalog. Pull `main`, confirm `.claude-plugin/marketplace.json` exists, push, and retry. |
+| `claude plugin install ./fe-toolkit-demo` errors with `Plugin "./fe-toolkit-demo" not found in any configured marketplace` | `claude plugin install` only accepts `<name>@<marketplace>`, not a directory path. Run `claude plugin marketplace add ./fe-toolkit-demo` first, then `claude plugin install fe-toolkit@tubi-fe`. |
+| `marketplace add` fails because `tubi-fe` already exists | You previously added the GitHub copy. Run `claude plugin marketplace remove tubi-fe` and re-add either source. |
 
 ## Dependencies
 
