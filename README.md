@@ -72,19 +72,39 @@ Verify with:
 ```bash
 claude plugin list
 /mcp        # in a Claude Code session - should list `atlassian` and `figma`
-/plugin     # should show fe-toolkit enabled with 4 commands, 3 agents, 2 skills, 1 MCP server
+/plugin     # should show fe-toolkit enabled with 5 commands, 3 agents, 2 skills, 1 MCP server, 1 hook
 ```
 
 ## First-run auth
 
-Both MCPs use OAuth 2.1; nothing is hardcoded. On first use:
+Both MCPs use OAuth 2.1; nothing is hardcoded. The recommended way to complete both flows in one shot is:
 
-- The first Atlassian tool call (any `/fe-toolkit:plan-ticket FE-1234`) opens a browser tab to authorize your Atlassian Cloud site (Jira / Confluence / Compass).
-- The first Figma tool call opens a browser tab to authorize Figma.
+```text
+/fe-toolkit:auth
+```
 
-After that, tokens persist; subsequent runs need no interaction.
+That command checks each MCP server, opens a browser tab for any one that needs authentication (Atlassian, then Figma), and verifies the resulting token works. Run it once after install.
 
-If a browser does not open, run the corresponding command and watch the terminal for the authorization URL to copy/paste.
+### Why not just let it auto-trigger?
+
+Each MCP server's OAuth token is shared across all of Claude Code (it lives in your system keychain under `Claude Code-credentials`), so the very first time you use any tool that needs Atlassian or Figma OAuth, a browser tab opens automatically and the token persists from then on. In practice, though:
+
+- If you have used Atlassian Cloud from another Claude Code plugin before, that token is already cached and Atlassian shows `✓ Connected` from day one - no browser needed.
+- The Figma MCP is newer, so most users hit `! Needs authentication` the first time. Subagents are not guaranteed to bubble the OAuth flow up to a browser tab in your terminal session, so the call can fail silently with a "permissions issue" error instead of opening the browser. Running `/fe-toolkit:auth` from the top-level agent avoids that path entirely.
+
+A `SessionStart` hook detects this state on every Claude Code launch and prints a one-line reminder if any MCP server tied to this plugin is still `Needs authentication`. The reminder points you straight at `/fe-toolkit:auth`.
+
+### Manual fallback
+
+If `/fe-toolkit:auth` does not work for some reason, you can complete OAuth via Claude Code's built-in MCP UI:
+
+```text
+/mcp
+```
+
+then arrow-key to the row that says `Needs authentication` and press Enter. Same flow, just one extra step.
+
+Once both servers show `✓ Connected` in `claude mcp list`, tokens persist across sessions until they expire (months, typically) - subsequent runs need no interaction.
 
 ## Usage loop
 
@@ -103,9 +123,13 @@ flowchart LR
   plan --> impl --> commit --> review
 ```
 
+### `/fe-toolkit:auth`
+
+One-shot OAuth into every MCP server this plugin needs (Atlassian + Figma). Idempotent - if a server is already authenticated it is left alone. Run once after install, and any time `claude mcp list` shows a `Needs authentication` row for a plugin-provided server.
+
 ### `/fe-toolkit:plan-ticket <TICKET-ID>`
 
-Reads the Jira ticket, follows every Figma URL in the description / comments, scouts the repo, then produces a plan-mode development plan with: Context, Design notes, Scope, Affected files, Implementation steps, Testing strategy, Risks & open questions. Ends by asking you to **Accept / Revise / Save**.
+Reads the Jira ticket, follows every Figma URL in the description / comments, scouts the repo, then produces a plan-mode development plan with: Context, Design notes, Scope, Affected files, Implementation steps, Testing strategy, Risks & open questions. Ends by asking you to **Accept / Revise / Save**. Performs a pre-flight check that both MCPs are authenticated; if not, it stops with a pointer to `/fe-toolkit:auth` instead of failing inside a subagent.
 
 ### `/fe-toolkit:save-plan [TICKET-ID]`
 
@@ -131,7 +155,8 @@ fe-toolkit-demo/
 │   ├── plan-ticket.md              # /fe-toolkit:plan-ticket
 │   ├── save-plan.md                # /fe-toolkit:save-plan
 │   ├── commit.md                   # /fe-toolkit:commit
-│   └── review.md                   # /fe-toolkit:review
+│   ├── review.md                   # /fe-toolkit:review
+│   └── auth.md                     # /fe-toolkit:auth
 ├── agents/
 │   ├── jira-reader.md
 │   ├── figma-reader.md
@@ -143,6 +168,10 @@ fe-toolkit-demo/
 │   │   └── scripts/commit.sh
 │   └── save-plan/
 │       └── SKILL.md
+├── hooks/
+│   └── hooks.json                  # SessionStart -> scripts/check-auth.sh
+├── scripts/
+│   └── check-auth.sh               # warns if any plugin MCP needs OAuth
 └── README.md
 ```
 

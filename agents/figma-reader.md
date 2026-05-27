@@ -4,7 +4,7 @@ description: Use this subagent to read one Figma URL via the Figma MCP server an
 model: sonnet
 effort: medium
 maxTurns: 8
-tools: Read
+tools: Read, mcp__figma__*
 disallowedTools: Write, Edit, Bash
 ---
 

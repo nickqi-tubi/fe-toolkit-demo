@@ -15,7 +15,17 @@ You are operating as a frontend tech lead. Your job for this turn is to turn a J
 2. Verify the shape matches `^[A-Z][A-Z0-9]+-\d+$` (for example `FE-1234`, `WEB-12`). If it does not match, tell the user the expected shape, give an example, and stop.
 3. Store the validated value as `TICKET_ID`.
 
-## Step 2 - Read the Jira ticket via subagent
+## Step 2 - Pre-flight check: Atlassian MCP is authenticated
+
+Before dispatching any subagent, confirm the Atlassian MCP server is usable. Subagents cannot reliably trigger OAuth flows, so we have to fail fast here with an actionable message instead of getting a cryptic "permissions issue" inside the subagent.
+
+Check by looking at the tools you have available: do you see any `mcp__atlassian__*` tool? If not, stop and tell the user:
+
+> Atlassian MCP is not authenticated yet. Run `/fe-toolkit:auth` once to complete OAuth, then re-run this command.
+
+Do **not** attempt to call `mcp__atlassian__authenticate` yourself from here - it does not need to run in this command's context, and surfacing a clear instruction is more useful than auto-recovering silently.
+
+## Step 3 - Read the Jira ticket via subagent
 
 Dispatch the `jira-reader` subagent with the prompt:
 
@@ -25,13 +35,21 @@ Wait for it to return. The report will include: Summary, Status, Assignee, Descr
 
 If the subagent reports the ticket does not exist or you do not have permission, surface that to the user verbatim and stop.
 
-## Step 3 - Read every Figma URL in parallel
+## Step 4 - If Figma URLs were found, pre-flight check Figma MCP
+
+If the Jira report's `Figma URLs` section is empty, skip Step 5 entirely (note "No Figma designs linked" in the plan) and continue at Step 6.
+
+Otherwise, before dispatching figma-reader subagents, confirm the Figma MCP server is usable. Same logic as Step 2: do you see any `mcp__figma__*` tool? If not, stop and tell the user:
+
+> Figma MCP is not authenticated yet. Run `/fe-toolkit:auth` once to complete OAuth, then re-run this command. (You can also proceed without Figma context - reply "skip figma" and I'll synthesize the plan from the Jira ticket alone.)
+
+Wait for the user's reply before continuing. On "skip figma", note "Figma designs were linked but not read - user opted to skip" in the plan and continue to Step 6.
+
+## Step 5 - Read every Figma URL in parallel
 
 For each URL in the `Figma URLs` section of the Jira report, dispatch one `figma-reader` subagent **in parallel** (multiple Task tool calls in a single message). Pass each URL verbatim. Each subagent will return a design-context summary.
 
-If the Jira report contains zero Figma URLs, skip this step and note "No Figma designs linked" in the plan.
-
-## Step 4 - Quickly scout the repository
+## Step 6 - Quickly scout the repository
 
 Without editing anything, do a short, targeted scout of this repo to ground the plan in reality:
 
@@ -41,7 +59,7 @@ Without editing anything, do a short, targeted scout of this repo to ground the 
 
 Time-box this to a handful of tool calls. Do not exhaustively read the codebase.
 
-## Step 5 - Synthesize the plan
+## Step 7 - Synthesize the plan
 
 Produce a single markdown plan in the chat with these sections:
 
@@ -77,7 +95,7 @@ Bullets. Be explicit about anything the ticket did not answer.
 
 Keep the plan concise and specific. Do not over-engineer. Do not include emojis. Cite files using markdown links when you mention them.
 
-## Step 6 - Hand off
+## Step 8 - Hand off
 
 End your response with this exact prompt to the user:
 

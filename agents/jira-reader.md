@@ -4,7 +4,7 @@ description: Use this subagent to fetch a Jira ticket and return a structured ma
 model: sonnet
 effort: medium
 maxTurns: 8
-tools: Read, Grep
+tools: Read, Grep, mcp__atlassian__*
 disallowedTools: Write, Edit, Bash
 ---
 
