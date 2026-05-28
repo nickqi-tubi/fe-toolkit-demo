@@ -1,7 +1,6 @@
 ---
 name: jira-reader
 description: Use this subagent to fetch a Jira ticket and return a structured markdown summary with every Figma URL extracted. Invoke whenever the user references a Jira issue key (for example `FE-1234`) and you need its content. Read-only.
-model: sonnet
 effort: medium
 maxTurns: 8
 tools: Read, Grep, mcp__atlassian__*

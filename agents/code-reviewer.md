@@ -1,7 +1,6 @@
 ---
 name: code-reviewer
 description: Use this subagent to review frontend code changes (a staged diff or a branch diff against main). Returns a structured review grouped as Blocking / Suggestions / Nits with concrete file:line citations. Read-only.
-model: sonnet
 effort: medium
 maxTurns: 20
 tools: Read, Grep, Glob, Bash

@@ -1,7 +1,6 @@
 ---
 name: figma-reader
 description: Use this subagent to read one Figma URL via the Figma MCP server and return a design-context summary (components, tokens, copy, screenshots). Invoke once per Figma URL, in parallel when there are multiple. Read-only.
-model: sonnet
 effort: medium
 maxTurns: 8
 tools: Read, mcp__figma__*
