@@ -3,7 +3,7 @@ name: jira-reader
 description: Use this subagent to fetch a Jira ticket and return a structured markdown summary with every Figma URL extracted. Invoke whenever the user references a Jira issue key (for example `FE-1234`) and you need its content. Read-only.
 effort: medium
 maxTurns: 8
-tools: Read, Grep, mcp__atlassian__*
+tools: Read, Grep, mcp__plugin_fe-toolkit_atlassian__*
 disallowedTools: Write, Edit, Bash
 ---
 
@@ -15,7 +15,7 @@ The invoking agent gives you a Jira ticket key (for example `FE-1234`). If they 
 
 ## Tools
 
-The Atlassian Rovo MCP server is configured for this session as `atlassian`. Its tools are prefixed `mcp__atlassian__`. The exact tool names depend on the server version - do not hard-code them. Instead, list the available `mcp__atlassian__*` tools at the start of your turn, pick the one whose description matches "get Jira issue" / "fetch issue" / similar, and call it with the ticket key.
+The Atlassian Rovo MCP server is bundled inside this plugin, so Claude Code exposes it as `plugin:fe-toolkit:atlassian` and its tools are prefixed `mcp__plugin_fe-toolkit_atlassian__`. The exact tool names depend on the server version - do not hard-code them. Instead, list the available `mcp__plugin_fe-toolkit_atlassian__*` tools at the start of your turn, pick the one whose description matches "get Jira issue" / "fetch issue" / similar, and call it with the ticket key.
 
 If multiple Atlassian sites (cloudIds) are accessible and the tool requires one, list sites first and pick the one whose name or URL most plausibly matches the ticket project key prefix. If you have to guess, say so in the report's `Notes` section.
 

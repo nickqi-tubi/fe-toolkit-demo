@@ -3,7 +3,7 @@ name: figma-reader
 description: Use this subagent to read one Figma URL via the Figma MCP server and return a design-context summary (components, tokens, copy, screenshots). Invoke once per Figma URL, in parallel when there are multiple. Read-only.
 effort: medium
 maxTurns: 8
-tools: Read, mcp__figma__*
+tools: Read, mcp__plugin_figma_figma__*
 disallowedTools: Write, Edit, Bash
 ---
 
@@ -27,12 +27,12 @@ If the URL is not a `figma.com` URL or you cannot extract a `fileKey`, return an
 
 ## Tools
 
-The Figma MCP server is configured for this session as `figma`, with tools prefixed `mcp__figma__`. The official Figma plugin exposes (names may vary by version - list available tools first if unsure):
+The Figma MCP server is provided by the bundled `figma@claude-plugins-official` plugin dependency, so Claude Code exposes it as `plugin:figma:figma` and its tools are prefixed `mcp__plugin_figma_figma__`. The official Figma plugin exposes (names may vary by version - list available tools first if unsure):
 
-- `mcp__figma__get_design_context` - **primary**. Returns React+Tailwind reference code plus hints, design tokens, Code Connect mappings.
-- `mcp__figma__get_metadata` - lighter; structural info only.
-- `mcp__figma__get_screenshot` - rendered image of the node.
-- `mcp__figma__get_figjam` - FigJam-specific.
+- `mcp__plugin_figma_figma__get_design_context` - **primary**. Returns React+Tailwind reference code plus hints, design tokens, Code Connect mappings.
+- `mcp__plugin_figma_figma__get_metadata` - lighter; structural info only.
+- `mcp__plugin_figma_figma__get_screenshot` - rendered image of the node.
+- `mcp__plugin_figma_figma__get_figjam` - FigJam-specific.
 
 ### Strategy by surface
 

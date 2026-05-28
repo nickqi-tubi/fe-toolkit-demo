@@ -19,11 +19,11 @@ You are operating as a frontend tech lead. Your job for this turn is to turn a J
 
 Before dispatching any subagent, confirm the Atlassian MCP server is usable. Subagents cannot reliably trigger OAuth flows, so we have to fail fast here with an actionable message instead of getting a cryptic "permissions issue" inside the subagent.
 
-Check by looking at the tools you have available: do you see any `mcp__atlassian__*` tool? If not, stop and tell the user:
+Check by looking at the tools you have available: do you see any `mcp__plugin_fe-toolkit_atlassian__*` tool? If not, stop and tell the user:
 
 > Atlassian MCP is not authenticated yet. Run `/fe-toolkit:auth` once to complete OAuth, then re-run this command.
 
-Do **not** attempt to call `mcp__atlassian__authenticate` yourself from here - it does not need to run in this command's context, and surfacing a clear instruction is more useful than auto-recovering silently.
+Do **not** attempt to call `mcp__plugin_fe-toolkit_atlassian__authenticate` yourself from here - it does not need to run in this command's context, and surfacing a clear instruction is more useful than auto-recovering silently.
 
 ## Step 3 - Read the Jira ticket via subagent
 
@@ -39,7 +39,7 @@ If the subagent reports the ticket does not exist or you do not have permission,
 
 If the Jira report's `Figma URLs` section is empty, skip Step 5 entirely (note "No Figma designs linked" in the plan) and continue at Step 6.
 
-Otherwise, before dispatching figma-reader subagents, confirm the Figma MCP server is usable. Same logic as Step 2: do you see any `mcp__figma__*` tool? If not, stop and tell the user:
+Otherwise, before dispatching figma-reader subagents, confirm the Figma MCP server is usable. Same logic as Step 2: do you see any `mcp__plugin_figma_figma__*` tool? If not, stop and tell the user:
 
 > Figma MCP is not authenticated yet. Run `/fe-toolkit:auth` once to complete OAuth, then re-run this command. (You can also proceed without Figma context - reply "skip figma" and I'll synthesize the plan from the Jira ticket alone.)
 
